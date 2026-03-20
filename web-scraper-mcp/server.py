@@ -70,7 +70,16 @@ def scrape_summary(soup: BeautifulSoup, url: str) -> dict:
         og_image = og.get("content", "")
 
     favicon = ""
-    icon = soup.find("link", rel=lambda r: r and "icon" in " ".join(r).lower())
+    # BeautifulSoup may parse `rel` as either a string or a list of strings
+    # depending on the HTML structure, so handle both.
+    def rel_contains_icon(rel_value) -> bool:
+        if not rel_value:
+            return False
+        if isinstance(rel_value, str):
+            return "icon" in rel_value.lower()
+        return "icon" in " ".join(rel_value).lower()
+
+    icon = soup.find("link", rel=rel_contains_icon)
     if icon:
         favicon = urljoin(url, icon.get("href", ""))
 
