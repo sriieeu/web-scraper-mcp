@@ -5,7 +5,6 @@ import tempfile
 import os
 from unittest.mock import AsyncMock, patch
 
-import server
 
 try:
     from selenium import webdriver
